@@ -26,10 +26,12 @@ public class SubscriptionsRestService {
     public Response getAllUserSubscriptions(@QueryParam("token") String token) {
 
         try {
-            authToken(token);
+            User storedUser = authToken(token);
         } catch (UnauthorizedUserException e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+
+
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }
