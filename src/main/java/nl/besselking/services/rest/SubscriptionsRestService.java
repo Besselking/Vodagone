@@ -2,12 +2,15 @@ package nl.besselking.services.rest;
 
 import nl.besselking.dao.SubscriptionDAO;
 import nl.besselking.dao.UserDAO;
+import nl.besselking.dao.UserSubscriptionDAO;
 import nl.besselking.domain.Subscription;
 import nl.besselking.domain.User;
+import nl.besselking.dto.SubscriptionRequest;
 import nl.besselking.exceptions.UnauthorizedUserException;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -20,20 +23,41 @@ public class SubscriptionsRestService {
     private SubscriptionDAO subDAO;
 
     @Inject
+    private UserSubscriptionDAO usubDAO;
+
+    @Inject
     private UserDAO userDAO;
 
     @GET
     public Response getAllUserSubscriptions(@QueryParam("token") String token) {
-
+        User storedUser;
         try {
-            User storedUser = authToken(token);
+            storedUser = authToken(token);
         } catch (UnauthorizedUserException e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
+        List<Subscription> subs= usubDAO.allUserSubscriptions(storedUser);
 
 
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.ok(new Object() { List<Subscription> abonnementen = subs;}).build();
+    }
+
+    @POST
+    public Response addNewUserSubscription(@QueryParam("token") String token,
+                                           SubscriptionRequest sub) {
+        User storedUser;
+        try {
+            storedUser = authToken(token);
+        } catch (UnauthorizedUserException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        usubDAO.addUserSubscription(storedUser, sub);
+
+        return getAllUserSubscriptions(token);
+
+
     }
 
     @GET
@@ -43,7 +67,7 @@ public class SubscriptionsRestService {
         try {
             authToken(token);
         } catch (UnauthorizedUserException e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
 

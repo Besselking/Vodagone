@@ -1,9 +1,9 @@
 package nl.besselking.services.rest;
 
 import nl.besselking.dao.UserDAO;
-import nl.besselking.domain.LoginRequest;
-import nl.besselking.domain.LoginResponse;
 import nl.besselking.domain.User;
+import nl.besselking.dto.LoginRequest;
+import nl.besselking.dto.LoginResponse;
 import nl.besselking.exceptions.UnauthorizedUserException;
 import nl.besselking.services.Password;
 
@@ -28,10 +28,9 @@ public class AuthenticationRestService {
         try {
             User user = authenticate(loginRequest);
 
-            if(user.getToken() == null) {
+            if (user.getToken() == null) {
                 user.issueToken();
                 udao.addToken(user);
-                System.out.println("user.getToken() = " + user.getToken());
             }
 
             return Response.ok(new LoginResponse(user.getUser(), user.getToken())).build();

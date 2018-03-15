@@ -1,4 +1,4 @@
-package nl.besselking.domain;
+package nl.besselking.dto;
 
 public class LoginResponse {
     private String user;
