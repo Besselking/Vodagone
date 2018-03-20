@@ -1,7 +1,6 @@
 package nl.besselking.dao;
 
 import nl.besselking.domain.Subscription;
-import nl.besselking.services.DBConnection;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class SubscriptionDAO extends DAO{
     @Inject
-    private DBConnection db;
+    private DatabaseService db;
 
     public SubscriptionDAO(){
     }

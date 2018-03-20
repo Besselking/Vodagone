@@ -1,7 +1,6 @@
 package nl.besselking.dao;
 
-import nl.besselking.services.DBConnection;
-
+import javax.inject.Inject;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,10 +10,12 @@ import java.sql.SQLException;
 public abstract class DAO{
 
     protected PreparedStatement stmt;
+    @Inject
+    protected DatabaseService db;
     protected Connection conn;
 
     protected void prepareStmt(String s) throws SQLException, IOException {
-        conn = DBConnection.getConn();
+        conn = db.getConn();
         stmt = conn.prepareStatement(s);
     }
 

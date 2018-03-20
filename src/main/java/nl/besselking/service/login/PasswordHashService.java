@@ -1,4 +1,4 @@
-package nl.besselking.services;
+package nl.besselking.service.login;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -9,7 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * jBCrypt: http://www.mindrot.org/projects/jBCrypt/
  */
 
-public class Password {
+public class PasswordHashService {
     // Define the BCrypt workload to use when generating password hashes. 10-31 is a valid value.
     private static int workload = 12;
 

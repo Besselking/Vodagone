@@ -1,4 +1,4 @@
-package nl.besselking.services;
+package nl.besselking.dao;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,11 +8,11 @@ import java.util.Properties;
 
 import static java.sql.DriverManager.getConnection;
 
-public class DBConnection {
-    public DBConnection() {
+public class DatabaseService {
+    public DatabaseService() {
     }
 
-    public static Connection getConn() throws IOException {
+    public Connection getConn() throws IOException {
         Properties connectionProps = getProperties();
 
         String drivers = connectionProps.getProperty("jdbc.driverClassName");
