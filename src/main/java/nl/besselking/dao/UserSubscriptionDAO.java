@@ -1,10 +1,8 @@
 package nl.besselking.dao;
 
 import nl.besselking.domain.Subscription;
-import nl.besselking.domain.User;
 import nl.besselking.domain.UserSubscription;
 import nl.besselking.rest.dto.SubscriptionListResponse;
-import nl.besselking.rest.dto.SubscriptionRequest;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -28,12 +26,12 @@ public class UserSubscriptionDAO extends DAO {
         conn = db.getConn();
     }
 
-    public void addUserSubscription(User user, SubscriptionRequest newSub) {
+    public void addUserSubscription(int userid, int id) {
         try {
             prepareStmt("INSERT INTO user_abonnement(id, userid, startDatum, verdubbeling, status)" +
                     "VALUES (?,?,?,?,?);");
-            stmt.setInt(1, newSub.getId());
-            stmt.setInt(2, user.getId());
+            stmt.setInt(1, id);
+            stmt.setInt(2, userid);
             stmt.setDate(3, new java.sql.Date(Calendar.getInstance().getTime().getTime()));
             stmt.setString(4, "standaard");
             stmt.setString(5, "actief");
@@ -45,16 +43,16 @@ public class UserSubscriptionDAO extends DAO {
         }
     }
     
-    public SubscriptionListResponse allUserSubscriptions(User user) {
+    public SubscriptionListResponse allUserSubscriptions(int userid) {
         List<Subscription> subs = new ArrayList<>();
-        findAllUserSubscriptions(subs, user);
-        double totalPrice = getTotalPrice(user);
+        findAllUserSubscriptions(subs, userid);
+        double totalPrice = getTotalPrice(userid);
 
         return new SubscriptionListResponse(subs, totalPrice);
         
     }
 
-    private double getTotalPrice(User user) {
+    private double getTotalPrice(int userid) {
         try {
             prepareStmt("SELECT SUM(prijs) AS prijs " +
                     "FROM abonnement a " +
@@ -62,7 +60,7 @@ public class UserSubscriptionDAO extends DAO {
                     "ON a.id = ua.id " +
                     "AND ua.userid = ? " +
                     "AND status = 'actief'");
-            stmt.setInt(1, user.getId());
+            stmt.setInt(1, userid);
             ResultSet rs = getResultSet();
             if(rs.next())
                 return rs.getDouble("prijs");
@@ -74,14 +72,14 @@ public class UserSubscriptionDAO extends DAO {
         return 0;
     }
 
-    private void findAllUserSubscriptions(List<Subscription> subs, User user) {
+    private void findAllUserSubscriptions(List<Subscription> subs, int userid) {
         try {
             prepareStmt("SELECT a.id, aanbieder, dienst " +
                     "FROM abonnement a " +
                     "INNER JOIN user_abonnement ua " +
                     "ON a.id = ua.id " +
                     "AND ua.userid = ?");
-            stmt.setInt(1, user.getId());
+            stmt.setInt(1, userid);
 
             addNewUserSubscriptionsFromDatabase(subs, stmt);
         } catch (SQLException e) {
@@ -110,7 +108,7 @@ public class UserSubscriptionDAO extends DAO {
         );
     }
 
-    public UserSubscription getUserSubscription(User user, int id) {
+    public UserSubscription getUserSubscription(int userid, int id) {
         try {
             prepareStmt("SELECT a.id, aanbieder, dienst, prijs, startDatum, verdubbeling, deelbaar, status " +
                     "FROM abonnement a " +
@@ -118,7 +116,7 @@ public class UserSubscriptionDAO extends DAO {
                     "ON a.id = ua.id " +
                     "AND ua.userid = ? " +
                     "AND a.id = ?");
-            stmt.setInt(1, user.getId());
+            stmt.setInt(1, userid);
             stmt.setInt(2, id);
             ResultSet rs = getResultSet();
             if(rs.next())
@@ -144,13 +142,13 @@ public class UserSubscriptionDAO extends DAO {
         );
     }
 
-    public void terminateSubscription(User user, int id) {
+    public void terminateSubscription(int userid, int id) {
         try {
             prepareStmt("UPDATE user_abonnement " +
                     "SET status = 'opgezegd' " +
                     "WHERE userid  = ? " +
                     "AND id = ?");
-            stmt.setInt(1, user.getId());
+            stmt.setInt(1, userid);
             stmt.setInt(2, id);
             stmt.execute();
         } catch (SQLException e) {
