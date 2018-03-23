@@ -7,6 +7,8 @@ public class User{
     private String user;
     private String password;
     private String token;
+    private String firstName;
+    private String lastname;
 
     public User(){
     }
@@ -47,5 +49,21 @@ public class User{
     public void issueToken() {
         SecureRandom sr = new SecureRandom();
         token = String.format("%04d-%04d-%04d", sr.nextInt(1000), sr.nextInt(1000), sr.nextInt(1000));
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 }

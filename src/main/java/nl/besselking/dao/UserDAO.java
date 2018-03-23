@@ -50,6 +50,8 @@ public class UserDAO extends DAO{
         user.setUser(rs.getString("user"));
         user.setPassword(rs.getString("password"));
         user.setToken(rs.getString("token"));
+        user.setFirstName(rs.getString("firstname"));
+        user.setLastname(rs.getString("lastname"));
         return user;
     }
 
@@ -67,9 +69,10 @@ public class UserDAO extends DAO{
         return null;
     }
 
-    public User findByName(String username) {
+    public User findByUserName(String username) {
         try {
-            prepareStmt("SELECT * FROM user WHERE user = ?");
+            prepareStmt("SELECT u.id, user, password, token, firstname, lastname FROM user u INNER JOIN subscriber s " +
+                    "ON u.id = s.id  WHERE user = ?");
             stmt.setString(1, username);
             return getUser();
         } catch (SQLException e) {
@@ -82,7 +85,7 @@ public class UserDAO extends DAO{
 
     public User findByToken(String token) {
         try {
-            prepareStmt("SELECT * FROM user WHERE token = ?");
+            prepareStmt("SELECT u.id, user, password, token, firstname, lastname FROM user u INNER JOIN subscriber s ON u.id = s.id WHERE token = ?");
             stmt.setString(1, token);
             return getUser();
         } catch (SQLException e) {

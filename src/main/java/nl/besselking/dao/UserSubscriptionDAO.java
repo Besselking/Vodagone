@@ -26,12 +26,12 @@ public class UserSubscriptionDAO extends DAO {
         conn = db.getConn();
     }
 
-    public void addUserSubscription(int userid, int id) {
+    public void addUserSubscription(int subscriberid, int id) {
         try {
-            prepareStmt("INSERT INTO user_abonnement(id, userid, startDatum, verdubbeling, status)" +
+            prepareStmt("INSERT INTO subscriber_subscription(id, subscriberid, startDatum, verdubbeling, status)" +
                     "VALUES (?,?,?,?,?);");
             stmt.setInt(1, id);
-            stmt.setInt(2, userid);
+            stmt.setInt(2, subscriberid);
             stmt.setDate(3, new java.sql.Date(Calendar.getInstance().getTime().getTime()));
             stmt.setString(4, "standaard");
             stmt.setString(5, "actief");
@@ -43,24 +43,24 @@ public class UserSubscriptionDAO extends DAO {
         }
     }
     
-    public SubscriptionListResponse allUserSubscriptions(int userid) {
+    public SubscriptionListResponse allUserSubscriptions(int subscriberid) {
         List<Subscription> subs = new ArrayList<>();
-        findAllUserSubscriptions(subs, userid);
-        double totalPrice = getTotalPrice(userid);
+        findAllUserSubscriptions(subs, subscriberid);
+        double totalPrice = getTotalPrice(subscriberid);
 
         return new SubscriptionListResponse(subs, totalPrice);
         
     }
 
-    private double getTotalPrice(int userid) {
+    private double getTotalPrice(int subscriberid) {
         try {
             prepareStmt("SELECT SUM(prijs) AS prijs " +
-                    "FROM abonnement a " +
-                    "INNER JOIN user_abonnement ua " +
-                    "ON a.id = ua.id " +
-                    "AND ua.userid = ? " +
+                    "FROM subscription s " +
+                    "INNER JOIN subscriber_subscription ss " +
+                    "ON s.id = ss.id " +
+                    "AND ss.subscriberid = ? " +
                     "AND status = 'actief'");
-            stmt.setInt(1, userid);
+            stmt.setInt(1, subscriberid);
             ResultSet rs = getResultSet();
             if(rs.next())
                 return rs.getDouble("prijs");
@@ -72,14 +72,14 @@ public class UserSubscriptionDAO extends DAO {
         return 0;
     }
 
-    private void findAllUserSubscriptions(List<Subscription> subs, int userid) {
+    private void findAllUserSubscriptions(List<Subscription> subs, int subscriberid) {
         try {
-            prepareStmt("SELECT a.id, aanbieder, dienst " +
-                    "FROM abonnement a " +
-                    "INNER JOIN user_abonnement ua " +
-                    "ON a.id = ua.id " +
-                    "AND ua.userid = ?");
-            stmt.setInt(1, userid);
+            prepareStmt("SELECT s.id, aanbieder, dienst " +
+                    "FROM subscription s " +
+                    "INNER JOIN subscriber_subscription ss " +
+                    "ON s.id = ss.id " +
+                    "AND ss.subscriberid = ?");
+            stmt.setInt(1, subscriberid);
 
             addNewUserSubscriptionsFromDatabase(subs, stmt);
         } catch (SQLException e) {
@@ -110,12 +110,12 @@ public class UserSubscriptionDAO extends DAO {
 
     public UserSubscription getUserSubscription(int userid, int id) {
         try {
-            prepareStmt("SELECT a.id, aanbieder, dienst, prijs, startDatum, verdubbeling, deelbaar, status " +
-                    "FROM abonnement a " +
-                    "INNER JOIN user_abonnement ua " +
-                    "ON a.id = ua.id " +
-                    "AND ua.userid = ? " +
-                    "AND a.id = ?");
+            prepareStmt("SELECT s.id, aanbieder, dienst, prijs, startDatum, verdubbeling, deelbaar, status " +
+                    "FROM subscription s " +
+                    "INNER JOIN subscriber_subscription ss " +
+                    "ON s.id = ss.id " +
+                    "AND ss.subscriberid = ? " +
+                    "AND s.id = ?");
             stmt.setInt(1, userid);
             stmt.setInt(2, id);
             ResultSet rs = getResultSet();
@@ -144,9 +144,9 @@ public class UserSubscriptionDAO extends DAO {
 
     public void terminateSubscription(int userid, int id) {
         try {
-            prepareStmt("UPDATE user_abonnement " +
+            prepareStmt("UPDATE subscriber_subscription " +
                     "SET status = 'opgezegd' " +
-                    "WHERE userid  = ? " +
+                    "WHERE subscriberid  = ? " +
                     "AND id = ?");
             stmt.setInt(1, userid);
             stmt.setInt(2, id);

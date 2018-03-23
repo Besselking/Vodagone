@@ -22,11 +22,11 @@ public class LoginRestController {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response authenticateUser(LoginRequest loginRequest) {
+    public Response login(LoginRequest loginRequest) {
         try {
             User user = loginService.authenticate(loginRequest.getUser(), loginRequest.getPassword());
 
-            return Response.ok(new LoginResponse(user.getUser(), user.getToken())).build();
+            return Response.ok(new LoginResponse(user.getFirstName() + " " + user.getLastname(), user.getToken())).build();
 
         } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN).build();

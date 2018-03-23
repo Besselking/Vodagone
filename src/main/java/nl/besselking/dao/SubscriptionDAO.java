@@ -33,11 +33,11 @@ public class SubscriptionDAO extends DAO{
     private void findAllSubscriptions(List<Subscription> subs, String filter) {
         try {
             if(!"".equals(filter)) {
-                prepareStmt("SELECT id, aanbieder, dienst FROM abonnement WHERE aanbieder LIKE ? OR dienst LIKE ?");
+                prepareStmt("SELECT id, aanbieder, dienst FROM subscribtion WHERE aanbieder LIKE ? OR dienst LIKE ?");
                 stmt.setString(1, "%" + filter + "%");
                 stmt.setString(2, "%" + filter + "%");
             } else {
-                prepareStmt("SELECT id, aanbieder, dienst FROM abonnement");
+                prepareStmt("SELECT id, aanbieder, dienst FROM subscription");
             }
             addNewSubscriptionsFromDatabase(subs, stmt);
             closeConn();
