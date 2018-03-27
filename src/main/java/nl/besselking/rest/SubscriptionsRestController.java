@@ -1,6 +1,7 @@
 package nl.besselking.rest;
 
 import nl.besselking.rest.dto.SubscriptionRequest;
+import nl.besselking.rest.dto.UpgradeRequest;
 import nl.besselking.service.subscription.SubscriptionService;
 
 import javax.inject.Inject;
@@ -55,8 +56,9 @@ public class SubscriptionsRestController {
     @POST
     @Path("/{id}")
     public Response upgradeSubscription(@QueryParam("token") String token,
-                                        @PathParam("id") int id) {
-        return subscriptionService.upgradeSubscription(token, id);
+                                        @PathParam("id") int id,
+                                        UpgradeRequest upgradeRequest) {
+        return subscriptionService.upgradeSubscription(token, id, upgradeRequest.getVerdubbeling());
     }
 
 

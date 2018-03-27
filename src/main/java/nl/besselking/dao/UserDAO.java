@@ -106,7 +106,7 @@ public class UserDAO extends DAO{
         return user;
     }
 
-    public void addToken(User user) {
+    public void updateToken(User user) {
         try {
             prepareStmt("UPDATE user SET token = ? where id = ?");
             stmt.setString(1, user.getToken());

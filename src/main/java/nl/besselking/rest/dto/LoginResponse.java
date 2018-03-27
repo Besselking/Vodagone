@@ -4,18 +4,11 @@ public class LoginResponse {
     private String user;
     private String token;
 
-    public LoginResponse(String user, String token) {
-        this.user = user;
+    public LoginResponse(String firstname, String lastname, String token) {
+        this.user = firstname + " " + lastname;
         this.token = token;
     }
 
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
 
     public String getToken() {
         return token;

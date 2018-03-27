@@ -29,11 +29,11 @@ public class UserSubscriptionDAO extends DAO {
     public void addUserSubscription(int subscriberid, int id) {
         try {
             prepareStmt("INSERT INTO subscriber_subscription(id, subscriberid, startDatum, verdubbeling, status)" +
-                    "VALUES (?,?,?,?,?);");
+                    "VALUES (?,?,?,CASE WHEN (SELECT verdubbelbaar FROM subscription where id = ?) = true THEN 'standaard' ELSE 'niet-beschikbaar' END,?);");
             stmt.setInt(1, id);
             stmt.setInt(2, subscriberid);
             stmt.setDate(3, new java.sql.Date(Calendar.getInstance().getTime().getTime()));
-            stmt.setString(4, "standaard");
+            stmt.setInt(4, id);
             stmt.setString(5, "actief");
             stmt.execute();
         } catch (SQLException e) {
@@ -54,7 +54,8 @@ public class UserSubscriptionDAO extends DAO {
 
     private double getTotalPrice(int subscriberid) {
         try {
-            prepareStmt("SELECT SUM(prijs) AS prijs " +
+            prepareStmt("SELECT " +
+                    "SUM(CASE WHEN verdubbeling = 'verdubbeld' THEN prijs * 1.5 ELSE prijs END) AS prijs " +
                     "FROM subscription s " +
                     "INNER JOIN subscriber_subscription ss " +
                     "ON s.id = ss.id " +
@@ -110,7 +111,10 @@ public class UserSubscriptionDAO extends DAO {
 
     public UserSubscription getUserSubscription(int userid, int id) {
         try {
-            prepareStmt("SELECT s.id, aanbieder, dienst, prijs, startDatum, verdubbeling, deelbaar, status " +
+            prepareStmt("SELECT s.id, aanbieder, dienst, CASE WHEN status = 'opgezegd' THEN 0 " +
+                    "WHEN verdubbeling = 'verdubbeld' THEN prijs * 1.5 " +
+                    "ELSE prijs END AS prijs, " +
+                    "startDatum, verdubbeling, deelbaar, status " +
                     "FROM subscription s " +
                     "INNER JOIN subscriber_subscription ss " +
                     "ON s.id = ss.id " +
@@ -130,7 +134,7 @@ public class UserSubscriptionDAO extends DAO {
     }
 
     private UserSubscription mapResultSetToUserSubscription(ResultSet rs) throws SQLException {
-        return new UserSubscription(
+       return new UserSubscription(
                 rs.getInt("id"),
                 rs.getString("aanbieder"),
                 rs.getString("dienst"),
@@ -142,14 +146,31 @@ public class UserSubscriptionDAO extends DAO {
         );
     }
 
-    public void terminateSubscription(int userid, int id) {
+    public void terminateSubscription(int subscriberid, int id) {
         try {
             prepareStmt("UPDATE subscriber_subscription " +
                     "SET status = 'opgezegd' " +
                     "WHERE subscriberid  = ? " +
                     "AND id = ?");
-            stmt.setInt(1, userid);
+            stmt.setInt(1, subscriberid);
             stmt.setInt(2, id);
+            stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void upgradeSubscription(int id, int subscriberid, String verdubbeling) {
+        try {
+            prepareStmt("UPDATE subscriber_subscription " +
+                    "SET verdubbeling = ? " +
+                    "WHERE subscriberid  = ? " +
+                    "AND id = ?");
+            stmt.setString(1, verdubbeling);
+            stmt.setInt(2, subscriberid);
+            stmt.setInt(3, id);
             stmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();

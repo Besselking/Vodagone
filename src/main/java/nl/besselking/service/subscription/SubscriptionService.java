@@ -90,12 +90,16 @@ public class SubscriptionService {
         return Response.ok(subs).build();
     }
 
-    public Response upgradeSubscription(String token, int id) {
+    public Response upgradeSubscription(String token, int id, String verdubbeling) {
+        User storedUser;
         try {
-            loginService.authToken(token);
+            storedUser = loginService.authToken(token);
         } catch (UnauthorizedUserException e) {
             return Response.status(403).build();
         }
-        return Response.ok().build();
+
+        userSubscriptionDAO.upgradeSubscription(id, storedUser.getId(), verdubbeling);
+
+        return getSubscription(token, id);
     }
 }

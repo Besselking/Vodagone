@@ -1,6 +1,7 @@
 package nl.besselking.rest;
 
 import nl.besselking.domain.User;
+import nl.besselking.exceptions.UnauthorizedUserException;
 import nl.besselking.rest.dto.LoginRequest;
 import nl.besselking.rest.dto.LoginResponse;
 import nl.besselking.service.login.LoginService;
@@ -26,9 +27,9 @@ public class LoginRestController {
         try {
             User user = loginService.authenticate(loginRequest.getUser(), loginRequest.getPassword());
 
-            return Response.ok(new LoginResponse(user.getFirstName() + " " + user.getLastname(), user.getToken())).build();
+            return Response.ok(new LoginResponse(user.getFirstName(), user.getLastname(), user.getToken())).build();
 
-        } catch (Exception e) {
+        } catch (UnauthorizedUserException e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
