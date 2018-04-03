@@ -2,7 +2,6 @@ package nl.besselking.dao;
 
 import nl.besselking.domain.Subscription;
 import nl.besselking.domain.UserSubscription;
-import nl.besselking.rest.dto.SubscriptionListResponse;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class UserSubscriptionDAO extends DAO {
     @Inject
-    private DatabaseService db;
+    private DatabaseConnection db;
 
     public UserSubscriptionDAO() {
     }
@@ -43,16 +42,15 @@ public class UserSubscriptionDAO extends DAO {
         }
     }
     
-    public SubscriptionListResponse allUserSubscriptions(int subscriberid) {
+    public List<Subscription> allUserSubscriptions(int subscriberid) {
         List<Subscription> subs = new ArrayList<>();
         findAllUserSubscriptions(subs, subscriberid);
         double totalPrice = getTotalPrice(subscriberid);
-
-        return new SubscriptionListResponse(subs, totalPrice);
+        return subs;
         
     }
 
-    private double getTotalPrice(int subscriberid) {
+    public double getTotalPrice(int subscriberid) {
         try {
             prepareStmt("SELECT " +
                     "SUM(CASE WHEN verdubbeling = 'verdubbeld' THEN prijs * 1.5 ELSE prijs END) AS prijs " +

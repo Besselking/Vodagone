@@ -13,7 +13,7 @@ import java.util.List;
 
 public class SubscriptionDAO extends DAO{
     @Inject
-    private DatabaseService db;
+    private DatabaseConnection db;
 
     public SubscriptionDAO(){
     }

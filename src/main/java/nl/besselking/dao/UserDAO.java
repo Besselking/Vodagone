@@ -55,20 +55,6 @@ public class UserDAO extends DAO{
         return user;
     }
 
-    public User find(int id) {
-        try {
-            prepareStmt("SELECT * FROM user WHERE id = ?");
-            stmt.setInt(1, id);
-            return getUser();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     public User findByUserName(String username) {
         try {
             prepareStmt("SELECT u.id, user, password, token, firstname, lastname FROM user u INNER JOIN subscriber s " +

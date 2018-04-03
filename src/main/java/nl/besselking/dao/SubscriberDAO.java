@@ -48,8 +48,4 @@ public class SubscriberDAO extends DAO {
                 rs.getString("email")
         );
     }
-
-    public void shareSubscription(int id, int subscriptionid) {
-
-    }
 }

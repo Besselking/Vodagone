@@ -1,7 +1,9 @@
 package nl.besselking.rest;
 
+import nl.besselking.domain.User;
 import nl.besselking.exceptions.UnauthorizedUserException;
 import nl.besselking.rest.dto.LoginRequest;
+import nl.besselking.rest.dto.LoginResponse;
 import nl.besselking.service.login.LoginService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,8 +15,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.ws.rs.core.Response;
-
-import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginTest {
@@ -35,20 +35,38 @@ public class LoginTest {
     public void emptyRequestReturnsStat403() throws UnauthorizedUserException {
         Mockito.when(loginService.authenticate(null, null)).thenThrow(UnauthorizedUserException.class);
 
-        Response resp = loginRestController.login(rq);
-
-        Assert.assertThat(resp.getStatus(), is(403));
+        loginRestController.login(rq);
     }
 
     @Test
-    public void wrongUserRequestReturnsStat403() throws UnauthorizedUserException {
+    public void wrongUserRequestThrowsUnauthorizedUserException() throws UnauthorizedUserException {
         rq.setUser("asdf");
         rq.setPassword("sdfa");
 
-        Mockito.when(loginService.authenticate(rq.getUser(), rq.getPassword())).thenThrow(UnauthorizedUserException.class);
+        Mockito.when(loginService.authenticate("asdf", "sdfa")).thenThrow(UnauthorizedUserException.class);
 
-        Response resp = loginRestController.login(rq);
+        Response actual = loginRestController.login(rq);
+        Assert.assertEquals(403, actual.getStatus());
+    }
 
-        Assert.assertThat(resp.getStatus(), is(403));
+    @Test
+    public void correctUserRequest() throws UnauthorizedUserException {
+        rq.setUser("marijn");
+        rq.setPassword("test123");
+
+        LoginResponse lr = new LoginResponse("Marijn", "Besseling", "1234-1234-1234");
+        User user = new User();
+        user.setId(1);
+        user.setFirstName("Marijn");
+        user.setLastname("Besseling");
+        user.setToken("1234-1234-1234");
+        user.setPassword("radfadf");
+        user.setUser("marijn");
+
+        Mockito.when(loginService.authenticate("marijn", "test123")).thenReturn(user);
+
+        Response actual =  loginRestController.login(rq);
+
+        Assert.assertEquals(actual.getStatus(), Response.ok(lr).build().getStatus());
     }
 }

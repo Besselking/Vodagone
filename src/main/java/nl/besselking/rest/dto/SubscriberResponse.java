@@ -1,4 +1,4 @@
-package nl.besselking.service.subscription;
+package nl.besselking.rest.dto;
 
 public class SubscriberResponse {
     private int id;

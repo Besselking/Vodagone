@@ -11,7 +11,7 @@ public abstract class DAO{
 
     protected PreparedStatement stmt;
     @Inject
-    protected DatabaseService db;
+    protected DatabaseConnection db;
     protected Connection conn;
 
     protected void prepareStmt(String s) throws SQLException, IOException {

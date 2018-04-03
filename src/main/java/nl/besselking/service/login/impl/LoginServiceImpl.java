@@ -14,7 +14,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Inject
-    UserDAO userDAO;
+    private UserDAO userDAO;
 
     @Override
     public User authenticate(String username, String password) throws UnauthorizedUserException {

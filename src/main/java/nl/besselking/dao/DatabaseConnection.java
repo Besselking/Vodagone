@@ -1,15 +1,15 @@
 package nl.besselking.dao;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import static java.sql.DriverManager.getConnection;
 
-public class DatabaseService {
-    public DatabaseService() {
+public class DatabaseConnection {
+    public DatabaseConnection() {
     }
 
     public Connection getConn() throws IOException {
@@ -36,7 +36,9 @@ public class DatabaseService {
 
     private static Properties getProperties() throws IOException {
         Properties connectionProps = new Properties();
-        connectionProps.load(new FileInputStream("/home/marijn/Documents/HAN/OOSE/VodaGone/src/main/resources/db.properties"));
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        InputStream  input = cl.getResourceAsStream("db.properties");
+        connectionProps.load(input);
         return connectionProps;
     }
 }

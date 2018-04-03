@@ -11,7 +11,6 @@ import nl.besselking.rest.dto.SubscriptionListResponse;
 import nl.besselking.service.login.LoginService;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class SubscriptionService {
@@ -23,83 +22,37 @@ public class SubscriptionService {
     @Inject
     SubscriptionDAO subscriptionDAO;
 
-    public Response getAllUserSubscriptions(String token) {
-        User storedUser;
-        try {
-            storedUser = loginService.authToken(token);
-        } catch (UnauthorizedUserException e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-
-        SubscriptionListResponse subList = userSubscriptionDAO.allUserSubscriptions(storedUser.getId());
-
-
-        return Response.ok(subList).build();
+    public SubscriptionListResponse getAllUserSubscriptions(String token) throws UnauthorizedUserException {
+        User storedUser = loginService.authToken(token);
+        List<Subscription> subList = userSubscriptionDAO.allUserSubscriptions(storedUser.getId());
+        double totalPrice = userSubscriptionDAO.getTotalPrice(storedUser.getId());
+        return new SubscriptionListResponse(subList, totalPrice);
     }
 
-    public Response getSubscription(String token, int id){
-        User storedUser;
-        try {
-            storedUser = loginService.authToken(token);
-        } catch (UnauthorizedUserException e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-
+    public DetailedSubscriptionResponse getSubscription(String token, int id) throws UnauthorizedUserException {
+        User storedUser = loginService.authToken(token);
         UserSubscription sub = userSubscriptionDAO.getUserSubscription(storedUser.getId(), id);
-
-
-        return Response.ok(new DetailedSubscriptionResponse(sub)).build();
+        return new DetailedSubscriptionResponse(sub);
     }
 
-    public Response terminate(String token, int id) {
-        User storedUser;
-        try {
-            storedUser = loginService.authToken(token);
-        } catch (UnauthorizedUserException e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-
+    public void terminate(String token, int id) throws UnauthorizedUserException {
+        User storedUser = loginService.authToken(token);
         userSubscriptionDAO.terminateSubscription(storedUser.getId(), id);
-        return getSubscription(token, id);
-
     }
 
-    public Response addNewUserSubscription(String token, int subscriptionId) {
-        User storedUser;
-        try {
-            storedUser = loginService.authToken(token);
-        } catch (UnauthorizedUserException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
+    public void addNewUserSubscription(String token, int subscriptionId) throws UnauthorizedUserException {
+        User storedUser = loginService.authToken(token);
         userSubscriptionDAO.addUserSubscription(storedUser.getId(), subscriptionId);
-
-        return getAllUserSubscriptions(token);
     }
 
-    public Response getAllSubscriptions(String token, String filter) {
-        try {
-            loginService.authToken(token);
-        } catch (UnauthorizedUserException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-
+    public List<Subscription> getAllSubscriptions(String token, String filter) throws UnauthorizedUserException {
+        loginService.authToken(token);
         List<Subscription> subs = subscriptionDAO.list(filter);
-
-        return Response.ok(subs).build();
+        return subs;
     }
 
-    public Response upgradeSubscription(String token, int id, String verdubbeling) {
-        User storedUser;
-        try {
-            storedUser = loginService.authToken(token);
-        } catch (UnauthorizedUserException e) {
-            return Response.status(403).build();
-        }
-
+    public void upgradeSubscription(String token, int id, String verdubbeling) throws UnauthorizedUserException {
+        User storedUser = loginService.authToken(token);
         userSubscriptionDAO.upgradeSubscription(id, storedUser.getId(), verdubbeling);
-
-        return getSubscription(token, id);
     }
 }

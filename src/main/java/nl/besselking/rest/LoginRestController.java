@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("login")
-public class LoginRestController {
+public class LoginRestController extends RestController{
 
     @Inject
     private LoginService loginService;
@@ -26,11 +26,11 @@ public class LoginRestController {
     public Response login(LoginRequest loginRequest) {
         try {
             User user = loginService.authenticate(loginRequest.getUser(), loginRequest.getPassword());
-
-            return Response.ok(new LoginResponse(user.getFirstName(), user.getLastname(), user.getToken())).build();
+            LoginResponse response = new LoginResponse(user.getFirstName(), user.getLastname(), user.getToken());
+            return respondOk(response);
 
         } catch (UnauthorizedUserException e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
+            return respondUnauthorized(e);
         }
     }
 
