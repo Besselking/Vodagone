@@ -65,7 +65,8 @@ public class SubscriptionsRestController extends RestController{
                                            SubscriptionRequest sub) {
         try {
             subscriptionService.addNewUserSubscription(token, sub.getId());
-            return getSubscription(token, sub.getId());
+            DetailedSubscriptionResponse response = subscriptionService.getSubscription(token, sub.getId());
+            return respondCreated(response);
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);
         }
@@ -93,7 +94,8 @@ public class SubscriptionsRestController extends RestController{
                                         UpgradeRequest upgradeRequest) {
         try {
             subscriptionService.upgradeSubscription(token, id, upgradeRequest.getVerdubbeling());
-            return getSubscription(token, id);
+            DetailedSubscriptionResponse response = subscriptionService.getSubscription(token, id);
+            return respondCreated(response);
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);
         }

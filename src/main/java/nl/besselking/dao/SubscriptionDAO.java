@@ -24,20 +24,24 @@ public class SubscriptionDAO extends DAO{
     }
 
 
-    public List<Subscription> list(String filter) {
+    public List<Subscription> list(int userid, String filter) {
         List<Subscription> subs = new ArrayList<>();
-        findAllSubscriptions(subs, filter);
+        findAllSubscriptions(subs, filter, userid);
         return subs;
     }
 
-    private void findAllSubscriptions(List<Subscription> subs, String filter) {
+    private void findAllSubscriptions(List<Subscription> subs, String filter, int subscriberid) {
         try {
             if(!"".equals(filter)) {
-                prepareStmt("SELECT id, aanbieder, dienst FROM subscription WHERE aanbieder LIKE ? OR dienst LIKE ?");
+                prepareStmt("SELECT id, aanbieder, dienst FROM subscription WHERE (aanbieder LIKE ? OR dienst LIKE ?) " +
+                        "AND id NOT IN (SELECT id FROM subscriber_subscription WHERE subscriberid = ?)");
                 stmt.setString(1, "%" + filter + "%");
                 stmt.setString(2, "%" + filter + "%");
+                stmt.setInt(3, subscriberid);
             } else {
-                prepareStmt("SELECT id, aanbieder, dienst FROM subscription");
+                prepareStmt("SELECT id, aanbieder, dienst FROM subscription " +
+                        "WHERE id NOT IN (SELECT id FROM subscriber_subscription WHERE subscriberid = ?)");
+                stmt.setInt(1, subscriberid);
             }
             addNewSubscriptionsFromDatabase(subs, stmt);
             closeConn();

@@ -39,7 +39,7 @@ public class SubscriberRestController extends RestController{
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);
         }
-        return respondOk();
+        return respondCreated();
     }
 
 }

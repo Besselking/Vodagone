@@ -13,7 +13,15 @@ abstract class RestController {
         return Response.status(403).entity(e).build();
     }
 
-    protected Response respondOk() {
+    Response respondOk() {
         return Response.ok().build();
+    }
+
+    Response respondCreated(Object response) {
+        return Response.status(201).entity(response).build();
+    }
+
+    protected Response respondCreated() {
+        return Response.status(201).build();
     }
 }

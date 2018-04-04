@@ -46,8 +46,8 @@ public class SubscriptionService {
     }
 
     public List<Subscription> getAllSubscriptions(String token, String filter) throws UnauthorizedUserException {
-        loginService.authToken(token);
-        List<Subscription> subs = subscriptionDAO.list(filter);
+        User storedUser = loginService.authToken(token);
+        List<Subscription> subs = subscriptionDAO.list(storedUser.getId(), filter);
         return subs;
     }
 
