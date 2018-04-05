@@ -6,8 +6,7 @@ import nl.besselking.domain.Subscription;
 import nl.besselking.domain.User;
 import nl.besselking.domain.UserSubscription;
 import nl.besselking.exceptions.UnauthorizedUserException;
-import nl.besselking.rest.dto.DetailedSubscriptionResponse;
-import nl.besselking.rest.dto.SubscriptionListResponse;
+import nl.besselking.rest.dto.impl.SubscriptionListResponse;
 import nl.besselking.service.login.LoginService;
 
 import javax.inject.Inject;
@@ -16,10 +15,13 @@ import java.util.List;
 public class SubscriptionService {
 
     @Inject
+    private
     LoginService loginService;
     @Inject
+    private
     UserSubscriptionDAO userSubscriptionDAO;
     @Inject
+    private
     SubscriptionDAO subscriptionDAO;
 
     public SubscriptionListResponse getAllUserSubscriptions(String token) throws UnauthorizedUserException {
@@ -29,10 +31,9 @@ public class SubscriptionService {
         return new SubscriptionListResponse(subList, totalPrice);
     }
 
-    public DetailedSubscriptionResponse getSubscription(String token, int id) throws UnauthorizedUserException {
+    public UserSubscription getSubscription(String token, int id) throws UnauthorizedUserException {
         User storedUser = loginService.authToken(token);
-        UserSubscription sub = userSubscriptionDAO.getUserSubscription(storedUser.getId(), id);
-        return new DetailedSubscriptionResponse(sub);
+        return userSubscriptionDAO.getUserSubscription(storedUser.getId(), id);
     }
 
     public void terminate(String token, int id) throws UnauthorizedUserException {
@@ -47,8 +48,7 @@ public class SubscriptionService {
 
     public List<Subscription> getAllSubscriptions(String token, String filter) throws UnauthorizedUserException {
         User storedUser = loginService.authToken(token);
-        List<Subscription> subs = subscriptionDAO.list(storedUser.getId(), filter);
-        return subs;
+        return subscriptionDAO.list(storedUser.getId(), filter);
     }
 
     public void upgradeSubscription(String token, int id, String verdubbeling) throws UnauthorizedUserException {

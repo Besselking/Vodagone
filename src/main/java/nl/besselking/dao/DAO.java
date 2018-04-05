@@ -1,5 +1,7 @@
 package nl.besselking.dao;
 
+import nl.besselking.service.DatabaseConnection;
+
 import javax.inject.Inject;
 import java.io.IOException;
 import java.sql.Connection;
@@ -7,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class DAO{
+public abstract class DAO {
 
     protected PreparedStatement stmt;
     @Inject

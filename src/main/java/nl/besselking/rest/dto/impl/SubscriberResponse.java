@@ -1,6 +1,8 @@
-package nl.besselking.rest.dto;
+package nl.besselking.rest.dto.impl;
 
-public class SubscriberResponse {
+import nl.besselking.rest.dto.DTO;
+
+public class SubscriberResponse implements DTO {
     private int id;
     private String name;
     private String email;

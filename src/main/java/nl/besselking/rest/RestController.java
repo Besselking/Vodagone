@@ -1,11 +1,16 @@
 package nl.besselking.rest;
 
 import nl.besselking.exceptions.UnauthorizedUserException;
+import nl.besselking.rest.dto.DTO;
 
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 abstract class RestController {
-    Response respondOk(Object response) {
+    Response respondOk(DTO response) {
+        return Response.ok(response).build();
+    }
+    Response respondOk(List<DTO> response) {
         return Response.ok(response).build();
     }
 
@@ -17,11 +22,14 @@ abstract class RestController {
         return Response.ok().build();
     }
 
-    Response respondCreated(Object response) {
+    Response respondCreated(DTO response) {
+        return Response.status(201).entity(response).build();
+    }
+    Response respondCreated(List<DTO> response) {
         return Response.status(201).entity(response).build();
     }
 
-    protected Response respondCreated() {
+    Response respondCreated() {
         return Response.status(201).build();
     }
 }

@@ -2,8 +2,8 @@ package nl.besselking.rest;
 
 import nl.besselking.domain.User;
 import nl.besselking.exceptions.UnauthorizedUserException;
-import nl.besselking.rest.dto.LoginRequest;
-import nl.besselking.rest.dto.LoginResponse;
+import nl.besselking.rest.dto.impl.LoginRequest;
+import nl.besselking.rest.dto.impl.LoginResponse;
 import nl.besselking.service.login.LoginService;
 
 import javax.inject.Inject;

@@ -1,11 +1,10 @@
 package nl.besselking.rest;
 
 import nl.besselking.domain.Subscription;
+import nl.besselking.domain.UserSubscription;
 import nl.besselking.exceptions.UnauthorizedUserException;
-import nl.besselking.rest.dto.DetailedSubscriptionResponse;
-import nl.besselking.rest.dto.SubscriptionListResponse;
-import nl.besselking.rest.dto.SubscriptionRequest;
-import nl.besselking.rest.dto.UpgradeRequest;
+import nl.besselking.rest.dto.DTO;
+import nl.besselking.rest.dto.impl.*;
 import nl.besselking.service.subscription.SubscriptionService;
 
 import javax.inject.Inject;
@@ -13,9 +12,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("abonnementen")
-public class SubscriptionsRestController extends RestController{
+public class SubscriptionsRestController extends RestController {
 
     @Inject
     SubscriptionService subscriptionService;
@@ -37,7 +37,16 @@ public class SubscriptionsRestController extends RestController{
     public Response getSubscription(@QueryParam("token") String token,
                                     @PathParam("id") int id) {
         try {
-            DetailedSubscriptionResponse response = subscriptionService.getSubscription(token, id);
+            UserSubscription userSubscription = subscriptionService.getSubscription(token, id);
+            DetailedSubscriptionResponse response = new DetailedSubscriptionResponse(
+                    userSubscription.getId(),
+                    userSubscription.getAanbieder(),
+                    userSubscription.getDienst(),
+                    userSubscription.getPrijs(),
+                    userSubscription.getStartDatum(),
+                    userSubscription.getVerdubbeling(),
+                    userSubscription.getDeelbaar(),
+                    userSubscription.getStatus());
             return respondOk(response);
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);
@@ -65,7 +74,7 @@ public class SubscriptionsRestController extends RestController{
                                            SubscriptionRequest sub) {
         try {
             subscriptionService.addNewUserSubscription(token, sub.getId());
-            DetailedSubscriptionResponse response = subscriptionService.getSubscription(token, sub.getId());
+            SubscriptionListResponse response = subscriptionService.getAllUserSubscriptions(token);
             return respondCreated(response);
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);
@@ -78,7 +87,12 @@ public class SubscriptionsRestController extends RestController{
     public Response getAllSubscriptions(@QueryParam("token") String token,
                                         @QueryParam("filter") String filter) {
         try {
-            List<Subscription> response = subscriptionService.getAllSubscriptions(token, filter);
+            List<Subscription> subscriptions = subscriptionService.getAllSubscriptions(token, filter);
+            List<DTO> response = subscriptions.stream().map(s -> new SubscriptionResponse(
+                    s.getId(),
+                    s.getAanbieder(),
+                    s.getDienst()))
+                    .collect(Collectors.toList());
             return respondOk(response);
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);
@@ -94,7 +108,16 @@ public class SubscriptionsRestController extends RestController{
                                         UpgradeRequest upgradeRequest) {
         try {
             subscriptionService.upgradeSubscription(token, id, upgradeRequest.getVerdubbeling());
-            DetailedSubscriptionResponse response = subscriptionService.getSubscription(token, id);
+            UserSubscription userSubscription = subscriptionService.getSubscription(token, id);
+            DetailedSubscriptionResponse response = new DetailedSubscriptionResponse(
+                    userSubscription.getId(),
+                    userSubscription.getAanbieder(),
+                    userSubscription.getDienst(),
+                    userSubscription.getPrijs(),
+                    userSubscription.getStartDatum(),
+                    userSubscription.getVerdubbeling(),
+                    userSubscription.getDeelbaar(),
+                    userSubscription.getStatus());
             return respondCreated(response);
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);

@@ -1,6 +1,8 @@
-package nl.besselking.rest.dto;
+package nl.besselking.rest.dto.impl;
 
-public class LoginRequest {
+import nl.besselking.rest.dto.DTO;
+
+public class LoginRequest implements DTO {
     private String user;
     private String password;
 

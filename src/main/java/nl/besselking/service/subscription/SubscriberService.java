@@ -4,7 +4,6 @@ import nl.besselking.dao.SubscriberDAO;
 import nl.besselking.dao.UserSubscriptionDAO;
 import nl.besselking.domain.Subscriber;
 import nl.besselking.exceptions.UnauthorizedUserException;
-import nl.besselking.rest.dto.SubscriberResponse;
 import nl.besselking.service.login.LoginService;
 
 import javax.inject.Inject;
@@ -22,14 +21,16 @@ public class SubscriberService {
     @Inject
     LoginService loginService;
 
-    public List getAllSubscribers(String token) throws UnauthorizedUserException {
+    public List<Subscriber> getAllSubscribers(String token) throws UnauthorizedUserException {
         loginService.authToken(token);
 
         List<Subscriber> subbers =  subscriberDAO.list();
-        List<SubscriberResponse> responseList = subbers.stream().map(subscriber -> new SubscriberResponse(
+        List<Subscriber> responseList = subbers.stream().map(subscriber -> new Subscriber(
                 subscriber.getId(),
                 subscriber.getFirstname(),
-                subscriber.getEmail())).collect(Collectors.toList());
+                subscriber.getLastname(),
+                subscriber.getEmail()))
+                .collect(Collectors.toList());
         return responseList;
 
     }

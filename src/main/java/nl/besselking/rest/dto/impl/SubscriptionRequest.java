@@ -1,6 +1,8 @@
-package nl.besselking.rest.dto;
+package nl.besselking.rest.dto.impl;
 
-public class SubscriptionRequest {
+import nl.besselking.rest.dto.DTO;
+
+public class SubscriptionRequest implements DTO {
 
     private Integer id;
     private String aanbieder;

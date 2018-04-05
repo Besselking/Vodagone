@@ -2,6 +2,7 @@ package nl.besselking.dao;
 
 import nl.besselking.domain.Subscription;
 import nl.besselking.domain.UserSubscription;
+import nl.besselking.service.DatabaseConnection;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -45,9 +46,7 @@ public class UserSubscriptionDAO extends DAO {
     public List<Subscription> allUserSubscriptions(int subscriberid) {
         List<Subscription> subs = new ArrayList<>();
         findAllUserSubscriptions(subs, subscriberid);
-        double totalPrice = getTotalPrice(subscriberid);
         return subs;
-        
     }
 
     public double getTotalPrice(int subscriberid) {

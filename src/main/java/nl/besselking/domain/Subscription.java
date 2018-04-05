@@ -13,6 +13,23 @@ public class Subscription {
         this.dienst = dienst;
     }
 
+    @Override
+    public String toString() {
+        return "Subscription{" +
+                "id=" + id +
+                ", aanbieder='" + aanbieder + '\'' +
+                ", dienst='" + dienst + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Subscription other = (Subscription) obj;
+        return (id == other.id
+        && aanbieder.equals(other.aanbieder)
+        && dienst.equals(other.dienst));
+    }
+
     public Integer getId() {
         return id;
     }

@@ -1,4 +1,4 @@
-package nl.besselking.dao;
+package nl.besselking.service;
 
 import java.io.IOException;
 import java.io.InputStream;

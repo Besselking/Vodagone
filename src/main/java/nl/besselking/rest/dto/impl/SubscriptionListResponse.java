@@ -1,10 +1,11 @@
-package nl.besselking.rest.dto;
+package nl.besselking.rest.dto.impl;
 
 import nl.besselking.domain.Subscription;
+import nl.besselking.rest.dto.DTO;
 
 import java.util.List;
 
-public class SubscriptionListResponse {
+public class SubscriptionListResponse implements DTO {
     private List<Subscription> abonnementen;
     private final double totalPrice;
 

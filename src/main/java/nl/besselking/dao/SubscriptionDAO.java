@@ -1,6 +1,7 @@
 package nl.besselking.dao;
 
 import nl.besselking.domain.Subscription;
+import nl.besselking.service.DatabaseConnection;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;

@@ -1,7 +1,10 @@
 package nl.besselking.rest;
 
+import nl.besselking.domain.Subscriber;
 import nl.besselking.exceptions.UnauthorizedUserException;
-import nl.besselking.rest.dto.ShareRequest;
+import nl.besselking.rest.dto.DTO;
+import nl.besselking.rest.dto.impl.ShareRequest;
+import nl.besselking.rest.dto.impl.SubscriberResponse;
 import nl.besselking.service.subscription.SubscriberService;
 
 import javax.inject.Inject;
@@ -9,6 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/abonnees")
 public class SubscriberRestController extends RestController{
@@ -20,7 +24,12 @@ public class SubscriberRestController extends RestController{
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSubscribers(@QueryParam("token") String token){
         try {
-            List response = subscriberService.getAllSubscribers(token);
+            List<Subscriber> subscribers = subscriberService.getAllSubscribers(token);
+            List<DTO> response = subscribers.stream().map(s -> new SubscriberResponse(
+                    s.getId(),
+                    s.getFirstname(),
+                    s.getEmail()))
+                    .collect(Collectors.toList());
             return respondOk(response);
         } catch (UnauthorizedUserException e) {
             return respondUnauthorized(e);

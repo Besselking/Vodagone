@@ -1,10 +1,10 @@
-package nl.besselking.rest.dto;
+package nl.besselking.rest.dto.impl;
 
-import nl.besselking.domain.UserSubscription;
+import nl.besselking.rest.dto.DTO;
 
 import java.util.Date;
 
-public class DetailedSubscriptionResponse {
+public class DetailedSubscriptionResponse implements DTO {
     private final Integer id;
     private final String aanbieder;
     private final String dienst;
@@ -26,14 +26,14 @@ public class DetailedSubscriptionResponse {
         this.deelbaar = deelbaar;
         this.status = status;
     }
-    public DetailedSubscriptionResponse(UserSubscription us) {
-        this.id = us.getId();
-        this.aanbieder = us.getAanbieder();
-        this.dienst = us.getDienst();
-        this.prijs = String.format("€%.2f per maand", us.getPrijs());
-        this.startDatum = us.getStartDatum().toString();
-        this.verdubbeling = us.getVerdubbeling();
-        this.deelbaar = us.getDeelbaar();
-        this.status = us.getStatus();
-    }
+//    public DetailedSubscriptionResponse(UserSubscription us) {
+//        this.id = us.getId();
+//        this.aanbieder = us.getAanbieder();
+//        this.dienst = us.getDienst();
+//        this.prijs = String.format("€%.2f per maand", us.getPrijs());
+//        this.startDatum = us.getStartDatum().toString();
+//        this.verdubbeling = us.getVerdubbeling();
+//        this.deelbaar = us.getDeelbaar();
+//        this.status = us.getStatus();
+//    }
 }
