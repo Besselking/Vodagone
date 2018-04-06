@@ -1,6 +1,7 @@
 package nl.besselking.domain;
 
 import java.security.SecureRandom;
+import java.util.Objects;
 
 public class User{
     private Integer id;
@@ -65,5 +66,24 @@ public class User{
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user1 = (User) o;
+        return Objects.equals(id, user1.id) &&
+                Objects.equals(user, user1.user) &&
+                Objects.equals(password, user1.password) &&
+                Objects.equals(token, user1.token) &&
+                Objects.equals(firstName, user1.firstName) &&
+                Objects.equals(lastname, user1.lastname);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, user, password, token, firstName, lastname);
     }
 }

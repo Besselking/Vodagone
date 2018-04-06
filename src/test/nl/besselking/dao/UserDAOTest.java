@@ -35,15 +35,15 @@ public class UserDAOTest {
     public void testIfCorrectUserIsFound() {
         User actual = userDAO.findByUserName("marijn");
         User expected = new User();
+        expected.setId(1);
         expected.setUser("marijn");
         expected.setFirstName("Marijn");
         expected.setLastname("Besseling");
-        expected.setId(1);
+        expected.setPassword("$2a$12$zdi6bMOxBrv4wkD7.wgLsegDU9CSMZj7HLLk5xjjgTjiklsb7h0Fy");
+        expected.setToken("1234-1234-1234");
 
-        Assert.assertEquals(expected.getId(), actual.getId());
-        Assert.assertEquals(expected.getUser(), actual.getUser());
-        Assert.assertEquals(expected.getFirstName(), actual.getFirstName());
-        Assert.assertEquals(expected.getLastname(), actual.getLastname());
+        Assert.assertEquals(expected, actual);
+
     }
     @Test
     public void testIfNoUserIsFound() {
